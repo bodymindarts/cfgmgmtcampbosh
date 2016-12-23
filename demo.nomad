@@ -51,7 +51,7 @@ job "cfgmgmcamp-demo" {
 
 			# Configure Docker driver with the image
 			config {
-				image = "bodymindarts/cfgmgmcamp-demo"
+				image = "bodymindarts/cfgmgmcamp-demo:latest"
 				port_map {
 					web = 4567
 				}
