@@ -1,2 +1,4 @@
-bosh-demo-account.key.json
-google.tfvars
+*.key.json
+*.tfvars
+*.pem
+*.pub
