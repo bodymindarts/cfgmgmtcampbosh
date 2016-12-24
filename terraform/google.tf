@@ -13,6 +13,12 @@ provider "google" {
   region  = "${var.google_region}"
 }
 
+resource "google_compute_address" "bosh" {
+  name   = "bosh"
+}
+output "box.bosh.public_ip" {
+  value = "${google_compute_address.bosh.address}"
+}
 
 resource "google_compute_network" "default" {
   name = "${var.google_network_name}"
@@ -47,4 +53,32 @@ resource "google_compute_subnetwork" "private-3" {
 }
 output "google.subnetwork.private-3.name" {
   value = "${google_compute_subnetwork.private-3.name}"
+}
+
+resource "google_compute_firewall" "default" {
+  name    = "${var.google_network_name}-default"
+  network = "${google_compute_network.default.name}"
+
+  # Allow ICMP traffic
+  allow {
+    protocol = "icmp"
+  }
+
+  # Allow TCP traffic
+  allow {
+    protocol = "tcp"
+  }
+
+  # Allow UDP traffic
+  allow {
+    protocol = "udp"
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  source_tags = ["${var.google_network_name}-default"]
+  target_tags = ["${var.google_network_name}-default"]
+}
+
+output "google.firewall.default.name" {
+  value = "${google_compute_firewall.default.name}"
 }
