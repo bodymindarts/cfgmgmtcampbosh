@@ -1,0 +1,38 @@
+Environment Definitions (google-demo/proto)
+
+This directory contains templates that describe the environment-specific
+settings of a single deployment.  These templates will be combined with
+the global and site templates to produce a single BOSH manifest for deployment
+purposes.  The templates are merged in the following order:
+
+  monitoring.yml              Configure whatever (external) monitoring system you
+                              want to track the performance and health of your
+                              deployment.
+
+  networking.yml              Configure the network numbering for this deployment.
+
+  director.yml                Identify the BOSH director UUID for this deployment.
+
+  scaling.yml                 Define the scaling properties for this deployment,
+                              including things like the number of instances, sizes
+                              of persistent disks, resource pool limits, etc.
+
+  properties.yml              Define properties (both globally and per-job),
+                              that are specific to this environment.  These will
+                              most likely override global and site properties.
+
+  credentials.yml             Define passwords and credentials here, so that they
+                              are centralized.  Keep in mind that commiting these
+                              into version control incurs some security risk.
+
+  cloudfoundry.yml            For deployments that integrate with Cloud Foundry
+                              installations (i.e. as service brokers), you can
+                              specify the integration details here, including
+                              things like the CF API, credentials, domains, etc.
+
+  name.yml                    Specify the name of this deployment.
+
+
+This directory also contains a Makefile that makes it easier to build
+the final BOSH manifest from all of the constituent templates.
+Run `make' to see some help, or `make manifest' to just rebuild.

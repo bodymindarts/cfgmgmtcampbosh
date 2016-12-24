@@ -1,0 +1,178 @@
+cloud_provider:
+  mbus: https://mbus:mbus-password@104.155.48.8:6868
+  properties:
+    agent:
+      mbus: https://mbus:mbus-password@0.0.0.0:6868
+    blobstore:
+      path: /var/vcap/micro_bosh/data/cache
+      provider: local
+    google:
+      project: bosh-demo
+    ntp:
+    - 0.pool.ntp.org
+    - 1.pool.ntp.org
+  ssh_tunnel:
+    host: 104.155.48.8
+    port: 22
+    private_key: ../proto-bosh.pem
+    user: REDACTED
+  template:
+    name: google_cpi
+    release: bosh-google-cpi
+compilation:
+  cloud_properties:
+    machine_type: n1-standard-4
+    zone: europe-west1-b
+  network: default
+  reuse_compilation_vms: true
+  workers: 2
+disk_pools:
+- cloud_properties:
+    type: pd-standard
+  disk_size: 20000
+  name: default
+jobs:
+- instances: 1
+  name: bosh
+  networks:
+  - name: vip
+    static_ips:
+    - 104.155.48.8
+  - default:
+    - dns
+    - gateway
+    name: default
+    static_ips:
+    - 10.4.1.2
+  persistent_disk_pool: default
+  properties: {}
+  resource_pool: bosh
+  templates:
+  - name: postgres
+    release: bosh
+  - name: nats
+    release: bosh
+  - name: blobstore
+    release: bosh
+  - name: director
+    release: bosh
+  - name: health_monitor
+    release: bosh
+  - name: shield-agent
+    release: shield
+  - name: agent-pgtools
+    release: shield
+  - name: google_cpi
+    release: bosh-google-cpi
+name: google-demo-proto-bosh
+networks:
+- name: default
+  subnets:
+  - cloud_properties:
+      network_name: bosh-demo
+      subnetwork_name: bosh-demo-private-1
+      tags:
+      - bosh-demo-default
+    gateway: 10.4.1.1
+    range: 10.4.1.0/24
+    reserved:
+    - 10.4.1.16 - 10.4.1.254
+    static:
+    - 10.4.1.2
+  type: manual
+- name: vip
+  type: vip
+properties:
+  agent:
+    mbus: nats://natsuser:REDACTED@10.4.1.2:4222
+  blobstore:
+    address: 10.4.1.2
+    agent:
+      password: REDACTED
+      user: blobstore-user
+    director:
+      password: REDACTED
+      user: director-user
+    port: 25250
+    provider: dav
+  director:
+    address: 10.4.1.2
+    cpi_job: google_cpi
+    db:
+      adapter: postgres
+      database: bosh
+      host: 127.0.0.1
+      listen_address: 127.0.0.1
+      password: REDACTED
+      user: boshdb
+    generate_vm_passwords: true
+    max_threads: 4
+    name: google-demo-proto-bosh
+    user_management:
+      local:
+        users:
+        - name: resurrector
+          password: REDACTED
+        - name: admin
+          password: REDACTED
+      provider: local
+  google:
+    project: bosh-demo
+  hm:
+    datadog: null
+    datadog_enabled: false
+    director_account:
+      password: REDACTED
+      user: resurrector
+    graphite: null
+    graphite_enabled: false
+    pagerduty: null
+    pagerduty_enabled: false
+    resurrector_enabled: true
+  nats:
+    address: 127.0.0.1
+    password: REDACTED
+    port: 4222
+    user: natsuser
+  ntp:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+  postgres:
+    adapter: postgres
+    database: bosh
+    host: 127.0.0.1
+    listen_address: 127.0.0.1
+    password: REDACTED
+    user: boshdb
+  shield:
+    agent:
+      daemon_public_key: DUMMY
+      ip: 10.4.1.2
+releases:
+- name: bosh
+  sha1: f8f086974d9769263078fb6cb7927655744dacbc
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=260
+- name: bosh-google-cpi
+  sha1: fc8c7025c3ba3aef66e005a4bdf7fd3d5e997974
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.6.1
+- name: shield
+  sha1: bfb1ac8f032b7fd4d3ffb0f7fe79fd69879b663b
+  url: https://bosh.io/d/github.com/starkandwayne/shield-boshrelease?v=6.4.2
+resource_pools:
+- cloud_properties:
+    machine_type: n1-standard-4
+    root_disk_size_gb: 40
+    root_disk_type: pd-standard
+    service_scopes:
+    - compute
+    - devstorage.full_control
+    zone: europe-west1-b
+  env:
+    bosh:
+      password: REDACTED
+  name: bosh
+  network: default
+  stemcell:
+    sha1: 3a2c407be6c1b3d04bb292ceb5007159100c85d7
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3312.12
+

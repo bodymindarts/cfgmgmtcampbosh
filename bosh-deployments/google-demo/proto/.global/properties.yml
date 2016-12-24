@@ -1,0 +1,89 @@
+---
+meta:
+  vcap_password: (( vault meta.vault_prefix "/vcap:crypt" ))
+  ntp: [ 0.pool.ntp.org, 1.pool.ntp.org ]
+  shield_public_key: (( param "Specify the SSH public key from this environment's SHIELD daemon" ))
+
+  bosh:
+    blobstore:
+      agent:
+        user: blobstore-user
+        pass: (( vault meta.vault_prefix "/blobstore/agent:password" ))
+      director:
+        user: director-user
+        pass: (( vault meta.vault_prefix "/blobstore/director:password" ))
+    users:
+    - name: hm
+      username: resurrector
+      password: (( vault meta.vault_prefix "/users/hm:password" ))
+    - name: admin
+      username: admin
+      password: (( vault meta.vault_prefix "/users/admin:password" ))
+    db:
+      user: boshdb
+      pass: (( vault meta.vault_prefix "/db:password" ))
+    nats:
+      user: natsuser
+      pass: (( vault meta.vault_prefix "/nats:password" ))
+
+    registry:
+      user: registry-user
+      pass: (( vault meta.vault_prefix "/registry:password" ))
+
+properties:
+  agent:
+    mbus: (( concat "nats://" meta.bosh.nats.user ":" meta.bosh.nats.pass "@" jobs.bosh.networks.default.static_ips.0 ":" properties.nats.port ))
+  blobstore:
+    address: (( grab jobs.bosh.networks.default.static_ips.0 ))
+    agent:
+      user: (( grab meta.bosh.blobstore.agent.user ))
+      password: (( grab meta.bosh.blobstore.agent.pass ))
+    director:
+      user: (( grab meta.bosh.blobstore.director.user ))
+      password: (( grab meta.bosh.blobstore.director.pass ))
+    port: 25250
+    provider: dav
+  director:
+    address: (( grab jobs.bosh.networks.default.static_ips.0 ))
+    cpi_job: (( param "Specify the CPI for your BOSH deployment" ))
+    generate_vm_passwords: true
+    db:
+      adapter: postgres
+      database: bosh
+      host: 127.0.0.1
+      listen_address: 127.0.0.1
+      user: (( grab meta.bosh.db.user ))
+      password: (( grab meta.bosh.db.pass ))
+    max_threads: 4
+    name: (( grab name ))
+    user_management:
+      provider: local
+      local:
+        users:
+        - name: (( grab meta.bosh.users.hm.username ))
+          password: (( grab meta.bosh.users.hm.password ))
+        - name: (( grab meta.bosh.users.admin.username ))
+          password: (( grab meta.bosh.users.admin.password ))
+  hm:
+    datadog: null
+    datadog_enabled: false
+    director_account:
+      user: (( grab meta.bosh.users.hm.username ))
+      password: (( grab meta.bosh.users.hm.password ))
+    graphite: null
+    graphite_enabled: false
+    pagerduty: null
+    pagerduty_enabled: false
+    resurrector_enabled: true
+  nats:
+    address: 127.0.0.1
+    user: (( grab meta.bosh.nats.user ))
+    password: (( grab meta.bosh.nats.pass ))
+    port: 4222
+  postgres: (( grab properties.director.db ))
+  ntp: (( grab meta.ntp ))
+
+  shield:
+    agent:
+      ip: (( grab jobs.bosh.networks.default.static_ips.0 ))
+      daemon_public_key: (( grab meta.shield_public_key ))

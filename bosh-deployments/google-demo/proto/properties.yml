@@ -1,0 +1,7 @@
+meta:
+  shield_public_key: "DUMMY"
+  google:
+    project: bosh-demo
+    region: europe-west1
+    zones:
+      z1: (( concat meta.google.region "-b" ))

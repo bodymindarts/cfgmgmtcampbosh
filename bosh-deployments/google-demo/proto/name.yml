@@ -1,0 +1,7 @@
+---
+name: google-demo-proto-bosh
+meta:
+  type: bosh
+  site: google-demo
+  env:  proto
+  vault_prefix: secret/google-demo/proto/bosh

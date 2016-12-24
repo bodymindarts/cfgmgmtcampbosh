@@ -1,0 +1,24 @@
+---
+networks:
+- name: vip
+  type: vip
+- name: default
+  subnets:
+  - range: 10.4.1.0/24
+    gateway: 10.4.1.1
+    cloud_properties:
+      network_name: bosh-demo # <- your network name
+      subnetwork_name: bosh-demo-private-1 # <- your global-infra-0 subnetwork name
+      tags:
+        - bosh-demo-default # <- your global-internal firewall name
+    reserved:
+      - 10.4.1.16 - 10.4.1.254 # Allocated to other deployments
+    static:
+      - 10.4.1.2
+
+jobs:
+- name: bosh
+  networks:
+  - (( prepend ))
+  - name: vip
+    static_ips: [104.155.48.8]
