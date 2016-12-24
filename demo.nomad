@@ -25,7 +25,7 @@ job "cfgmgmcamp-demo" {
 	group "hello-world" {
 		# Control the number of instances of this groups.
 		# Defaults to 1
-		count = 3
+		count = 2
 
 		# Configure the restart policy for the task group. If not provided, a
 		# default is used based on the job type.
@@ -61,8 +61,8 @@ job "cfgmgmcamp-demo" {
 				name = "${TASKGROUP}-sinatra"
 				port = "web"
 				check {
-					name = "alive"
-					type = "tcp"
+					type = "http"
+					path = "/_healthz"
 					interval = "10s"
 					timeout = "2s"
 				}
@@ -81,26 +81,6 @@ job "cfgmgmcamp-demo" {
 					}
 				}
 			}
-
-			# The artifact block can be specified one or more times to download
-			# artifacts prior to the task being started. This is convenient for
-			# shipping configs or data needed by the task.
-			# artifact {
-			#	  source = "http://foo.com/artifact.tar.gz"
-			#	  options {
-			#	      checksum = "md5:c4aa853ad2215426eb7d70a21922e794"
-			#     }
-			# }
-			
-			# Specify configuration related to log rotation
-			# logs {
-			#     max_files = 10
-			#	  max_file_size = 15
-			# }
-			 
-			# Controls the timeout between signalling a task it will be killed
-			# and killing the task. If not set a default is used.
-			# kill_timeout = "20s"
 		}
 	}
 }
