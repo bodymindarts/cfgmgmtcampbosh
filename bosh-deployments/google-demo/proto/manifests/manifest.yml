@@ -43,7 +43,7 @@ jobs:
     - gateway
     name: default
     static_ips:
-    - 10.4.1.2
+    - 10.4.0.2
   persistent_disk_pool: default
   properties: {}
   resource_pool: bosh
@@ -70,23 +70,23 @@ networks:
   subnets:
   - cloud_properties:
       network_name: bosh-demo
-      subnetwork_name: bosh-demo-private-1
+      subnetwork_name: bosh-demo-infra
       tags:
       - bosh-demo-default
-    gateway: 10.4.1.1
-    range: 10.4.1.0/24
+    gateway: 10.4.0.1
+    range: 10.4.0.0/24
     reserved:
-    - 10.4.1.16 - 10.4.1.254
+    - 10.4.0.16 - 10.4.0.254
     static:
-    - 10.4.1.2
+    - 10.4.0.2
   type: manual
 - name: vip
   type: vip
 properties:
   agent:
-    mbus: nats://natsuser:REDACTED@10.4.1.2:4222
+    mbus: nats://natsuser:REDACTED@10.4.0.2:4222
   blobstore:
-    address: 10.4.1.2
+    address: 10.4.0.2
     agent:
       password: REDACTED
       user: blobstore-user
@@ -96,7 +96,7 @@ properties:
     port: 25250
     provider: dav
   director:
-    address: 10.4.1.2
+    address: 10.4.0.2
     cpi_job: google_cpi
     db:
       adapter: postgres
@@ -147,7 +147,7 @@ properties:
   shield:
     agent:
       daemon_public_key: DUMMY
-      ip: 10.4.1.2
+      ip: 10.4.0.2
 releases:
 - name: bosh
   sha1: f8f086974d9769263078fb6cb7927655744dacbc
@@ -160,7 +160,8 @@ releases:
   url: https://bosh.io/d/github.com/starkandwayne/shield-boshrelease?v=6.4.2
 resource_pools:
 - cloud_properties:
-    machine_type: n1-standard-4
+    cpu: 2
+    ram: 5120
     root_disk_size_gb: 40
     root_disk_type: pd-standard
     service_scopes:
