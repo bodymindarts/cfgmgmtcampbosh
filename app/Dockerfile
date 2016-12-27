@@ -1,6 +1,6 @@
 FROM alpine:3.4
 
-RUN apk add --update openssl ruby ruby-rdoc ruby-irb ruby-io-console curl \
+RUN apk add --update openssl build-base ruby ruby-dev ruby-rdoc ruby-irb ruby-io-console curl \
         && rm -rf /var/cache/apk/*
 
 RUN set -e \

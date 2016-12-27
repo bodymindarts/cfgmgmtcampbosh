@@ -1,5 +1,7 @@
 require 'sinatra'
 
+set :server, 'thin'
+
 set :bind, '0.0.0.0'
 
 set :logging, true
