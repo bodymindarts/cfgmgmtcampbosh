@@ -19,17 +19,17 @@ job "cfgmgmcamp-demo" {
 
 			# Configure Docker driver with the image
 			config {
-				image = "bodymindarts/cfgmgmcamp-demo:latest"
+				image = "bodymindarts/cfgmgmcamp-demo"
         network_mode = "host"
 			}
 
 			service {
-				name = "${TASKGROUP}-sinatra"
+				name = "${TASKGROUP}-server"
 				port = "web"
 				check {
 					type = "http"
 					path = "/_healthz"
-					interval = "10s"
+					interval = "1s"
 					timeout = "2s"
 				}
 			}
